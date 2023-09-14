@@ -1,4 +1,3 @@
-const { json } = require("body-parser");
 const fs = require("fs");
 const path = require("path");
 
@@ -10,13 +9,13 @@ const p = path.join(
 
 module.exports = class Cart {
     static addProduct(id, productPrice) {
-        //Fetch the previous cart
-        let cart = { products: [], totalPrice: 0 };
+        // Fetch the previous cart
         fs.readFile(p, (err, fileContent) => {
+            let cart = { products: [], totalPrice: 0 };
             if (!err) {
                 cart = JSON.parse(fileContent);
             }
-            // Analyse the cart => Find existing product
+            // Analyze the cart => Find existing product
             const existingProductIndex = cart.products.findIndex(
                 (prod) => prod.id === id
             );
@@ -34,6 +33,24 @@ module.exports = class Cart {
             }
             cart.totalPrice = cart.totalPrice + +productPrice;
             fs.writeFile(p, JSON.stringify(cart), (err) => {
+                console.log(err);
+            });
+        });
+    }
+    static deleteProduct(id, productPrice) {
+        fs.readFile(p, (err, fileContent) => {
+            if (err) {
+                return;
+            }
+            const updatedCart = { ...JSON.parse(fileContent) };
+            const product = updatedCart.products.find((prod) => prod.id === id);
+            const productQty = products.qty;
+            updatedCart.products = updatedCart.products.filter(
+                (prod) => prod.id !== id
+            );
+            updatedCartcart.totalPrice = cart.totalPrice - productPrice * productQty;
+
+            fs.writeFile(p, JSON.stringify(updatedCart), (err) => {
                 console.log(err);
             });
         });
